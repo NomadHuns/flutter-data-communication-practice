@@ -22,48 +22,59 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("나도 실행돼?");
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder(
-              future: PostRepository().findById(1),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  print("테이터 있음!");
-                  Post post = snapshot.data!;
-                  return Center(child: Text("${post.title}"));
-                } else {
-                  print("테이터 없음...");
-                  return CircularProgressIndicator();
-                }
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder(
+                future: PostRepository().findById(1),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print("데이터 있음");
+                    Post post = snapshot.data!;
+                    return Center(child: Text("${post.title}", style: TextStyle(
+                      fontSize: 30,
+                    ),));
+                  } else {
+                    print("데이터 없음");
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
             ),
-          ),
-          Expanded(
-            child: FutureBuilder(
-              future: PostRepository().findAll(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<Post> postList = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: postList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Icon(Icons.ac_unit_outlined),
-                        title: Text("${postList[index].title}"),
-                        subtitle: Text("${postList[index].body}"),
-                      );
-                    },
-                  );
-                } else {
-                  return CircularProgressIndicator();
-                }
-              },
-            ),
-          )
-
-        ],
+            Expanded(
+              child: FutureBuilder(
+                future: PostRepository().findAll(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<Post> postList = snapshot.data!;
+                    return ListView.separated(
+                      itemCount: postList.length,
+                      separatorBuilder: (context, index) {
+                        return Divider(
+                          color: Colors.grey,
+                          height: 1,
+                          thickness: 1,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Icon(Icons.ac_unit_outlined),
+                          title: Text("${postList[index].title}"),
+                          subtitle: Text("${postList[index].body}"),
+                        );
+                      },
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
